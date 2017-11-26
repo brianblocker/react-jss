@@ -60,7 +60,7 @@ let managersCounter = 0
  */
 export default (stylesOrCreator, InnerComponent, options = {}) => {
   const isThemingEnabled = typeof stylesOrCreator === 'function'
-  const {theming = defaultTheming, inject, jss: optionsJss, ...sheetOptions} = options
+  const {theming = defaultTheming, inject, propName, jss: optionsJss, ...sheetOptions} = options
   const injectMap = inject ? toMap(inject) : defaultInjectProps
   const {themeListener} = theming
   const displayName = getDisplayName(InnerComponent)
@@ -68,6 +68,7 @@ export default (stylesOrCreator, InnerComponent, options = {}) => {
   const noTheme = {}
   const managerId = managersCounter++
   const manager = new SheetsManager()
+  const innerComponentPropName = propName || 'classes'
   const defaultProps = {...InnerComponent.defaultProps}
   delete defaultProps.classes
 
@@ -213,7 +214,7 @@ export default (stylesOrCreator, InnerComponent, options = {}) => {
       if (isThemingEnabled && injectMap.theme) props.theme = theme
       Object.assign(props, this.props)
       // We have merged classes already.
-      if (injectMap.classes) props.classes = classes
+      if (injectMap.classes) props[innerComponentPropName] = classes
       return <InnerComponent {...props} />
     }
   }
